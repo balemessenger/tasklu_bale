@@ -3,13 +3,12 @@ package cmd
 import (
 	"fmt"
 	"taskulu/api/grpc"
+	"time"
 
 	"taskulu/api/http"
 	"taskulu/internal"
 	"taskulu/internal/server"
 	"taskulu/pkg"
-
-	"taskulu/internal/postgres"
 )
 
 func initialize() *pkg.Logger {
@@ -17,13 +16,6 @@ func initialize() *pkg.Logger {
 	fmt.Println("taskulu build time:", pkg.BuildTime)
 	conf := internal.NewConfig("")
 	log := pkg.NewLog(conf.Log.Level)
-
-	db := postgres.New(log, postgres.Option{
-		Host: conf.Postgres.Host,
-		User: conf.Postgres.User,
-		Pass: conf.Postgres.Pass,
-		Db:   conf.Postgres.DB,
-	})
 
 	grpc.New(log, grpc.Option{
 		Address: conf.Endpoints.Grpc.Address,
@@ -39,10 +31,34 @@ func initialize() *pkg.Logger {
 
 	pkg.NewPrometheus(log, conf.Prometheus.Port)
 
-	//Initialize main logic
-	internal.NewExample(log, db).Start(conf.Core.WorkPoolSize)
+	bale := internal.NewBale("672ba3ce56037687f59fc746bf32f60581d8c551d5ead7aa098697021443700e")
 
-	return log
+	taskulu := internal.NewTaskulu()
+
+	date := time.Now()
+
+	for {
+		err, body := taskulu.GetActivities("AhlIDxPy5cphIr_O9DPUQ-7jetC3y8wpsCzf9m9TBeJ6IYA9cwdWO0dVn7znYU8z8Lx0wXt_M41HD3FVMH1Wqqkwyvmk5gG_LygeonZepSn557299wY31pwlnr802HsS", "8cdf91ddd058682d80163b7ecb93116a", "5a8d1fff56ad660b0dd0d343")
+		if err != nil {
+			log.Error(err)
+		}
+		t := time.Unix(int64(body.Data[0].CreatedAt), 0)
+		if t.After(date) {
+			message := "تسک "
+			message += body.Data[0].Content.Keys[0].Value
+			message += " از وضعیت "
+			message += body.Data[0].Content.Keys[1].Value
+			message += " به وضعیت "
+			message += body.Data[0].Content.Keys[2].Value
+			message += " تغییر کرد."
+			err = bale.Send(message)
+			if err != nil {
+				log.Error("Bale error::", err)
+			}
+			date = t
+		}
+		time.Sleep(time.Second)
+	}
 }
 
 func Main() {

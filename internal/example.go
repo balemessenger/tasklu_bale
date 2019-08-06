@@ -15,10 +15,9 @@ type ExampleProcessor struct {
 	exampleChannel chan string
 }
 
-func NewExample(log *pkg.Logger, db repositories.Database) *ExampleProcessor {
+func NewExample(log *pkg.Logger) *ExampleProcessor {
 	return &ExampleProcessor{
 		log:            log,
-		db:             db,
 		Processor:      processor.New(),
 		exampleChannel: make(chan string)}
 }
