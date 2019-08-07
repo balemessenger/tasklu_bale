@@ -1,4 +1,4 @@
-##taskulu
+#taskulu
 
 
 **Run**
@@ -11,7 +11,7 @@ Run all tests:
 `make test`
 
 Run specific test:
-`make test method=TestExampleRoute`
+`make test method=TestResponse`
 
 **Proto**
 `make proto arg=build`
