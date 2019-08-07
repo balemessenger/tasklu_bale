@@ -1,14 +1,14 @@
 package test
 
 import (
-	"encoding/json"
 	"github.com/stretchr/testify/assert"
+	"net/http"
 	"taskulu/internal"
-	"taskulu/internal/model"
 	"testing"
 )
 
-func TestResponse(t *testing.T) {
+func TestTaskuluResponse(t *testing.T) {
+	projectId := "123456"
 	input := `{
     "ok": true,
     "status": "OK",
@@ -40,10 +40,19 @@ func TestResponse(t *testing.T) {
         }
 	]
 }`
-	b := model.Body{}
-	err := json.Unmarshal([]byte(input), &b)
+	mockTaskulu.AddHandler(func(writer http.ResponseWriter, bytes []byte) {
+		_, err := writer.Write([]byte(input))
+		if err != nil {
+			t.Error(err)
+		}
+	})
+
+	taskulu := internal.NewTaskulu("http://127.0.0.1:12346")
+
+	err, b := taskulu.GetActivities("sdfsdf", "ssdfsdfsd", projectId)
+
 	if err != nil {
-		t.Fatal(err)
+		t.Error(err)
 	}
 
 	assert.Equal(t, b.Data[0].By, "56151bcafa1bc7a1810027ca")
@@ -52,7 +61,7 @@ func TestResponse(t *testing.T) {
 }
 
 func TestRealResponse(t *testing.T) {
-	taskulu := internal.NewTaskulu()
+	taskulu := internal.NewTaskulu("https://taskulu.com")
 	err, body := taskulu.GetActivities("oRjJhqNBKGsSeZz5DOfbTAxCV_qAqalolbQMqLqisW7OmVyKvf5cxQYDpiSwGAePf5WBx74jH9IP09_QKxa4xhTDVTWurosLWpOK6VFGzIsRVLighsGEL_KOyXJe9on7", "77a426f5d99770633459fcb99dbb2975", "5a8d1fff56ad660b0dd0d343")
 
 	if err != nil {
@@ -61,4 +70,15 @@ func TestRealResponse(t *testing.T) {
 	assert.Equal(t, body.Ok, true)
 	assert.Equal(t, body.Status, "OK")
 
+}
+
+func TestBaleToken(t *testing.T) {
+	mockBaleHook.AddHandler(func(w http.ResponseWriter, bytes []byte) {
+		assert.Equal(t, string(bytes), "{\"text\":\"salam\"}")
+	})
+	bale := internal.NewBale("http://127.0.0.1:12345", "1234")
+	err := bale.Send("salam")
+	if err != nil {
+		t.Error(err)
+	}
 }

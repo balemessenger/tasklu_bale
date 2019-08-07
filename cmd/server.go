@@ -31,9 +31,9 @@ func initialize() *pkg.Logger {
 
 	pkg.NewPrometheus(log, conf.Prometheus.Port)
 
-	bale := internal.NewBale("672ba3ce56037687f59fc746bf32f60581d8c551d5ead7aa098697021443700e")
+	bale := internal.NewBale("https://api.bale.ai", "672ba3ce56037687f59fc746bf32f60581d8c551d5ead7aa098697021443700e")
 
-	taskulu := internal.NewTaskulu()
+	taskulu := internal.NewTaskulu("https://taskulu.com")
 
 	date := time.Now()
 
@@ -53,7 +53,7 @@ func initialize() *pkg.Logger {
 			message += " تغییر کرد."
 			err = bale.Send(message)
 			if err != nil {
-				log.Error("Bale error::", err)
+				log.Error("BaleHook error::", err)
 			}
 			date = t
 		}

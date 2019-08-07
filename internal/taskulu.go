@@ -13,9 +13,9 @@ type TaskuluApi struct {
 	baseUrl string
 }
 
-func NewTaskulu() *TaskuluApi {
+func NewTaskulu(baseUrl string) *TaskuluApi {
 	return &TaskuluApi{
-		baseUrl: "https://taskulu.com/",
+		baseUrl: baseUrl,
 	}
 }
 
@@ -43,5 +43,5 @@ func (t *TaskuluApi) GetActivities(appKey string, sessionId string, projectId st
 }
 
 func (t *TaskuluApi) getActivitiesMethod(projectId string) string {
-	return "api/v1/projects/" + projectId + "/activities"
+	return "/api/v1/projects/" + projectId + "/activities"
 }

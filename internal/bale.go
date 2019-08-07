@@ -7,25 +7,27 @@ import (
 	"strings"
 )
 
-type Bale struct {
+type BaleHook struct {
 	baseUrl string
+	token   string
 }
 
-func NewBale(token string) *Bale {
-	return &Bale{
-		baseUrl: "https://api.bale.ai/v1/webhooks/" + token,
+func NewBale(baseUrl string, token string) *BaleHook {
+	return &BaleHook{
+		baseUrl: baseUrl,
+		token:   token,
 	}
 }
 
-func (b *Bale) Send(text string) error {
+func (b *BaleHook) Send(text string) error {
+	url := b.baseUrl + "/v1/webhooks/" + b.token
 	reader := strings.NewReader(fmt.Sprintf(`{"text":"%s"}`, text))
-	resp, err := http.Post(b.baseUrl, "application/json", reader)
+	resp, err := http.Post(url, "application/json", reader)
 	if err != nil {
 		return err
 	}
 	if resp.StatusCode != 200 {
 		return errors.New(resp.Status)
 	}
-
 	return nil
 }
