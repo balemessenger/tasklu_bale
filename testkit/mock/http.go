@@ -1,45 +1,77 @@
 package mock
 
 import (
-	"fmt"
-	"io/ioutil"
-	"log"
 	"net/http"
+	"github.com/gin-gonic/gin"
+	"taskulu/pkg"
+	"taskulu/internal"
+	"io/ioutil"
 )
 
-type FakeServer struct {
-	address  string
-	path     string
-	handlers []func(http.ResponseWriter, []byte)
+type Server struct {
+	engine     *gin.Engine
+	authorized *gin.RouterGroup
+	handler    *Handler
 }
 
-func NewMockServer(address string, path string) *FakeServer {
-	return &FakeServer{address, path, nil}
+type Option struct {
+	Address string
+	User    string
+	Pass    string
 }
 
-func (f *FakeServer) Start() {
-	go f.run()
-}
+func New(log *pkg.Logger, option Option) *Server {
+	engine := gin.Default()
+	auth := engine.Group("/admin", gin.BasicAuth(gin.Accounts{
+		option.User: option.Pass,
+		//"user2": "pass2", // user:user2 password:pass2
+	}))
+	s := Server{
+		engine:     engine,
+		authorized: auth,
+		handler:    NewHandler(log)}
+	s.setupRouter()
 
-func (f *FakeServer) AddHandler(handler func(http.ResponseWriter, []byte)) {
-	f.handlers = append(f.handlers, handler)
-}
-
-func (f *FakeServer) run() {
-	http.HandleFunc(f.path, func(w http.ResponseWriter, r *http.Request) {
-		body, err := ioutil.ReadAll(r.Body)
+	go func(address string) {
+		err := s.engine.Run(address)
 		if err != nil {
-			fmt.Println(err)
-			http.Error(w, err.Error(), 404)
-			return
+			log.Fatal(err)
 		}
-		if f.handlers == nil {
-			return
-		}
-		for _, h := range f.handlers {
-			h(w, body)
-		}
-	})
+	}(option.Address)
 
-	log.Fatal(http.ListenAndServe(f.address, nil))
+	return &s
+}
+
+type Handler struct {
+	log *pkg.Logger
+}
+
+func NewHandler(log *pkg.Logger) *Handler {
+	return &Handler{log}
+}
+
+func (h *Handler) GetActivities(c *gin.Context) {
+	c.String(http.StatusOK, Activities)
+	return
+}
+
+func (h *Handler) CreateSession(c *gin.Context) {
+	c.String(http.StatusCreated, Session)
+	return
+}
+
+func (h *Handler) BaleIntegration(c *gin.Context) {
+	b, err := ioutil.ReadAll(c.Request.Body)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+	c.String(http.StatusOK, string(b))
+	return
+}
+
+func (s *Server) setupRouter() {
+	s.engine.POST(internal.GetTaskuluApi().CreateSession(), s.handler.CreateSession)
+	s.engine.GET(internal.GetTaskuluApi().GetActivities("123456"), s.handler.GetActivities)
+	s.engine.GET("/v1/webhooks/", s.handler.BaleIntegration)
 }

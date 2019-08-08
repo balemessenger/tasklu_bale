@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"fmt"
-	"taskulu/api/grpc"
 	"time"
 
 	"taskulu/api/http"
@@ -16,10 +15,6 @@ func initialize() *pkg.Logger {
 	fmt.Println("taskulu build time:", pkg.BuildTime)
 	conf := internal.NewConfig("")
 	log := pkg.NewLog(conf.Log.Level)
-
-	grpc.New(log, grpc.Option{
-		Address: conf.Endpoints.Grpc.Address,
-	})
 
 	http.New(
 		log,

@@ -1,7 +1,6 @@
 package test
 
 import (
-	grpc2 "taskulu/api/grpc"
 	"taskulu/internal"
 	"taskulu/testkit/mock"
 
@@ -16,19 +15,12 @@ import (
 
 var Conf *internal.Config
 
-var mockBaleHook *mock.FakeServer
-var mockTaskulu *mock.FakeServer
+var taskulu *internal.TaskuluClient
 
 func setup() {
 	rand.Seed(time.Now().Unix())
 	Conf = testkit.InitTestConfig("config.yaml")
 	log := pkg.NewLog("DEBUG")
-
-	grpc2.New(log, grpc2.Option{
-		Address: Conf.Endpoints.Grpc.Address,
-	})
-
-	testkit.GetGrpcClient().Initialize(Conf.Endpoints.Grpc.Address)
 
 	http.New(
 		log,
@@ -38,11 +30,17 @@ func setup() {
 			Pass:    Conf.Endpoints.Http.Pass,
 		})
 
-	mockBaleHook = mock.NewMockServer("127.0.0.1:12345", "/v1/webhooks/")
-	mockBaleHook.Start()
+	mock.New(log, mock.Option{
+		Address: "127.0.0.1:12346",
+		User:    "test",
+		Pass:    "test",
+	})
 
-	mockTaskulu = mock.NewMockServer("127.0.0.1:12346", "/api/v1/projects/123456/activities")
-	mockTaskulu.Start()
+	taskulu = internal.NewTaskulu(log, internal.Option{
+		"http://127.0.0.1:12346",
+		"",
+		"",
+	})
 
 	time.Sleep(4000 * time.Millisecond)
 }

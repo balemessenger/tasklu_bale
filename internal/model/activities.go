@@ -1,11 +1,11 @@
 package model
 
-type Body struct {
-	Ok     bool   `json:"ok"`
-	Status string `json:"status"`
-	Data   []Data `json:"data"`
+type Activities struct {
+	Ok     bool             `json:"ok"`
+	Status string           `json:"status"`
+	Data   []ActivitiesData `json:"data"`
 }
-type Data struct {
+type ActivitiesData struct {
 	By        string  `json:"by"`
 	Content   Content `json:"content"`
 	CreatedAt int     `json:"created_at"`
