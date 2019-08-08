@@ -1,4 +1,5 @@
-**taskulu
+## Taskulu
+An integration of taskulu with bale messenger
 
 
 **Run**
@@ -8,13 +9,12 @@
 **Run test**
 
 Run all tests:
+
 `make test`
 
 Run specific test:
-`make test method=TestResponse`
 
-**Proto**
-`make proto arg=build`
+`make test method=TestResponse`
 
 
 **Release**
