@@ -6,6 +6,7 @@ import (
 	"taskulu/pkg"
 	"taskulu/internal"
 	"io/ioutil"
+	"fmt"
 )
 
 type Server struct {
@@ -51,6 +52,12 @@ func NewHandler(log *pkg.Logger) *Handler {
 }
 
 func (h *Handler) GetActivities(c *gin.Context) {
+	fmt.Println("=========", c.Query("app_key"))
+	if c.Query("app_key") == "" &&  c.Query("session_key") == "" {
+		c.AbortWithStatus(http.StatusUnauthorized)
+		return
+	}
+	fmt.Println(":::::::::::")
 	c.String(http.StatusOK, Activities)
 	return
 }

@@ -8,10 +8,11 @@ import (
 func TestGetActivites(t *testing.T) {
 	projectId := "123456"
 
-	err, b := taskulu.GetActivities(projectId)
+	err, b := taskulu.GetActivities(projectId, 3)
 
 	if err != nil {
 		t.Error(err)
+		return
 	}
 
 	assert.Equal(t, b.Data[0].By, "56151bcafa1bc7a1810027ca")

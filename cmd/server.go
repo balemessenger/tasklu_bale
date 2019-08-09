@@ -28,12 +28,16 @@ func initialize() *pkg.Logger {
 
 	bale := internal.NewBale("https://api.bale.ai", "672ba3ce56037687f59fc746bf32f60581d8c551d5ead7aa098697021443700e")
 
-	taskulu := internal.NewTaskulu("https://taskulu.com")
+	taskulu := internal.NewTaskulu(log, internal.Option{
+		BaseUrl:  "https://taskulu.com",
+		Username: "amsjavan",
+		Password: "0",
+	})
 
 	date := time.Now()
 
 	for {
-		err, body := taskulu.GetActivities("AhlIDxPy5cphIr_O9DPUQ-7jetC3y8wpsCzf9m9TBeJ6IYA9cwdWO0dVn7znYU8z8Lx0wXt_M41HD3FVMH1Wqqkwyvmk5gG_LygeonZepSn557299wY31pwlnr802HsS", "8cdf91ddd058682d80163b7ecb93116a", "5a8d1fff56ad660b0dd0d343")
+		err, body := taskulu.GetActivities("5a8d1fff56ad660b0dd0d343", 3)
 		if err != nil {
 			log.Error(err)
 		}

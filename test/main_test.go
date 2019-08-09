@@ -38,8 +38,8 @@ func setup() {
 
 	taskulu = internal.NewTaskulu(log, internal.Option{
 		"http://127.0.0.1:12346",
-		"",
-		"",
+		"test",
+		"test",
 	})
 
 	time.Sleep(4000 * time.Millisecond)
