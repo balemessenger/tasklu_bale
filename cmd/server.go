@@ -8,6 +8,7 @@ import (
 	"taskulu/internal"
 	"taskulu/internal/server"
 	"taskulu/pkg"
+	"taskulu/pkg/taskulu"
 )
 
 func initialize() *pkg.Logger {
@@ -28,36 +29,15 @@ func initialize() *pkg.Logger {
 
 	bale := internal.NewBale("https://api.bale.ai", "672ba3ce56037687f59fc746bf32f60581d8c551d5ead7aa098697021443700e")
 
-	taskulu := internal.NewTaskulu(log, internal.Option{
+	task := taskulu.New(log, taskulu.Option{
 		BaseUrl:  "https://taskulu.com",
 		Username: "amsjavan",
 		Password: "0",
 	})
 
-	date := time.Now()
+	integration := internal.NewBaleIntegration(log, task, bale, time.Now())
 
-	for {
-		err, body := taskulu.GetActivities("5a8d1fff56ad660b0dd0d343", 3)
-		if err != nil {
-			log.Error(err)
-		}
-		t := time.Unix(int64(body.Data[0].CreatedAt), 0)
-		if t.After(date) {
-			message := "تسک "
-			message += body.Data[0].Content.Keys[0].Value
-			message += " از وضعیت "
-			message += body.Data[0].Content.Keys[1].Value
-			message += " به وضعیت "
-			message += body.Data[0].Content.Keys[2].Value
-			message += " تغییر کرد."
-			err = bale.Send(message)
-			if err != nil {
-				log.Error("BaleHook error::", err)
-			}
-			date = t
-		}
-		time.Sleep(time.Second)
-	}
+	integration.Run()
 }
 
 func Main() {

@@ -8,14 +8,17 @@ import (
 	"os"
 	"taskulu/api/http"
 	"taskulu/pkg"
+	"taskulu/pkg/taskulu"
 	"taskulu/testkit"
 	"testing"
 	"time"
 )
 
-var Conf *internal.Config
-
-var taskulu *internal.TaskuluClient
+var (
+	Conf        *internal.Config
+	task        *taskulu.Client
+	integration *internal.BaleIntegration
+)
 
 func setup() {
 	rand.Seed(time.Now().Unix())
@@ -36,11 +39,15 @@ func setup() {
 		Pass:    "test",
 	})
 
-	taskulu = internal.NewTaskulu(log, internal.Option{
+	task = taskulu.New(log, taskulu.Option{
 		"http://127.0.0.1:12346",
 		"test",
 		"test",
 	})
+
+	bale := internal.NewBale("http://127.0.0.1:12346", "")
+
+	integration = internal.NewBaleIntegration(log, task, bale, time.Unix(1565091220, 0))
 
 	time.Sleep(4000 * time.Millisecond)
 }

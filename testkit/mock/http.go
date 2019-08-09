@@ -4,9 +4,8 @@ import (
 	"net/http"
 	"github.com/gin-gonic/gin"
 	"taskulu/pkg"
-	"taskulu/internal"
 	"io/ioutil"
-	"fmt"
+	"taskulu/pkg/taskulu"
 )
 
 type Server struct {
@@ -51,14 +50,12 @@ func NewHandler(log *pkg.Logger) *Handler {
 	return &Handler{log}
 }
 
-func (h *Handler) GetActivities(c *gin.Context) {
-	fmt.Println("=========", c.Query("app_key"))
+func (h *Handler) StatusActivitiesHandler(c *gin.Context) {
 	if c.Query("app_key") == "" &&  c.Query("session_key") == "" {
 		c.AbortWithStatus(http.StatusUnauthorized)
 		return
 	}
-	fmt.Println(":::::::::::")
-	c.String(http.StatusOK, Activities)
+	c.String(http.StatusOK, ChangeStatusActivities)
 	return
 }
 
@@ -78,7 +75,7 @@ func (h *Handler) BaleIntegration(c *gin.Context) {
 }
 
 func (s *Server) setupRouter() {
-	s.engine.POST(internal.GetTaskuluApi().CreateSession(), s.handler.CreateSession)
-	s.engine.GET(internal.GetTaskuluApi().GetActivities("123456"), s.handler.GetActivities)
-	s.engine.GET("/v1/webhooks/", s.handler.BaleIntegration)
+	s.engine.POST(taskulu.GetTaskuluApi().CreateSession(), s.handler.CreateSession)
+	s.engine.GET(taskulu.GetTaskuluApi().GetActivities("123456"), s.handler.StatusActivitiesHandler)
+	s.engine.POST("/v1/webhooks/", s.handler.BaleIntegration)
 }

@@ -3,6 +3,7 @@ package internal
 import (
 	"fmt"
 	"github.com/pkg/errors"
+	"io/ioutil"
 	"net/http"
 	"strings"
 )
@@ -19,15 +20,20 @@ func NewBale(baseUrl string, token string) *BaleHook {
 	}
 }
 
-func (b *BaleHook) Send(text string) error {
+func (b *BaleHook) Send(text string) (string, error) {
 	url := b.baseUrl + "/v1/webhooks/" + b.token
 	reader := strings.NewReader(fmt.Sprintf(`{"text":"%s"}`, text))
 	resp, err := http.Post(url, "application/json", reader)
 	if err != nil {
-		return err
+		return "", err
 	}
 	if resp.StatusCode != 200 {
-		return errors.New(resp.Status)
+		return "", errors.New(resp.Status)
 	}
-	return nil
+	rspByte, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+
+	return string(rspByte), nil
 }

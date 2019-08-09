@@ -8,7 +8,7 @@ import (
 func TestGetActivites(t *testing.T) {
 	projectId := "123456"
 
-	err, b := taskulu.GetActivities(projectId, 3)
+	err, b := task.GetActivities(projectId, 3)
 
 	if err != nil {
 		t.Error(err)
@@ -21,7 +21,7 @@ func TestGetActivites(t *testing.T) {
 }
 
 func TestCreateSession(t *testing.T) {
-	err, session := taskulu.CreateSession("test", "test")
+	err, session := task.CreateSession("test", "test")
 
 	if err != nil {
 		t.Error(err)

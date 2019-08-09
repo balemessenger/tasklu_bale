@@ -1,7 +1,7 @@
 package mock
 
 const (
-	Activities = `{
+	ChangeStatusActivities = `{
     "ok": true,
     "status": "OK",
     "data": [
@@ -15,15 +15,15 @@ const (
                             "project_id": "5a8d1fff56ad660b0dd0d343",
                             "task_id": "5d46b04456ad667202008c23"
                         },
-                        "value": "راه اندازی gitlab واسه CICD"
-                    },
-                    {
-                        "type": "text",
-                        "value": "Done"
+                        "value": "github"
                     },
                     {
                         "type": "text",
                         "value": "Doing"
+                    },
+                    {
+                        "type": "text",
+                        "value": "Done"
                     }
                 ],
                 "message": "شما وضعیت کار %[0] را از %[1] به %[2] تغییر دادید."

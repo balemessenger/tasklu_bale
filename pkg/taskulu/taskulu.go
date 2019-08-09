@@ -1,4 +1,4 @@
-package internal
+package taskulu
 
 import (
 	"encoding/json"
@@ -11,7 +11,7 @@ import (
 	"taskulu/pkg"
 )
 
-type TaskuluClient struct {
+type Client struct {
 	log        *pkg.Logger
 	baseUrl    string
 	username   string
@@ -27,8 +27,8 @@ type Option struct {
 	Password string
 }
 
-func NewTaskulu(log *pkg.Logger, option Option) *TaskuluClient {
-	return &TaskuluClient{
+func New(log *pkg.Logger, option Option) *Client {
+	return &Client{
 		log:       log,
 		baseUrl:   option.BaseUrl,
 		username:  option.Username,
@@ -38,7 +38,7 @@ func NewTaskulu(log *pkg.Logger, option Option) *TaskuluClient {
 	}
 }
 
-func (t *TaskuluClient) CreateSession(username, password string) (error, *model.Session) {
+func (t *Client) CreateSession(username, password string) (error, *model.Session) {
 	url := t.baseUrl + GetTaskuluApi().CreateSession()
 	payload := fmt.Sprintf(`{"identifier":"%s","password":"%s"}`, username, password)
 
@@ -63,7 +63,7 @@ func (t *TaskuluClient) CreateSession(username, password string) (error, *model.
 	return nil, b
 }
 
-func (t *TaskuluClient) GetActivities(projectId string, retryCount int) (error, *model.Activities) {
+func (t *Client) GetActivities(projectId string, retryCount int) (error, *model.Activities) {
 	resp, err := http.Get(t.getActivitiesUrl(projectId))
 	if err != nil {
 		return err, nil
@@ -94,12 +94,12 @@ func (t *TaskuluClient) GetActivities(projectId string, retryCount int) (error, 
 	return nil, b
 }
 
-func (t *TaskuluClient) getActivitiesUrl(projectId string) string {
+func (t *Client) getActivitiesUrl(projectId string) string {
 	return t.baseUrl + GetTaskuluApi().GetActivities(projectId) + GetTaskuluApi().GetAuthUrl(t.appKey, t.sessionId)
 
 }
 
-func (t *TaskuluClient) retrySession() {
+func (t *Client) retrySession() {
 	err, s := t.CreateSession(t.username, t.password)
 	t.logError(err)
 	t.appKey = s.Data.AppKey
@@ -107,6 +107,6 @@ func (t *TaskuluClient) retrySession() {
 	t.retryCount++
 }
 
-func (t *TaskuluClient) logError(err error) {
+func (t *Client) logError(err error) {
 	t.log.Error(err)
 }
