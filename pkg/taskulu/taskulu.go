@@ -7,7 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
-	"taskulu/internal/model"
+	"taskulu/pkg/taskulu/model"
 	"taskulu/pkg"
 )
 

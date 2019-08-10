@@ -3,7 +3,7 @@ package internal
 import (
 	"fmt"
 	"strings"
-	"taskulu/internal/model"
+	"taskulu/pkg/taskulu/model"
 	"taskulu/pkg"
 	"taskulu/pkg/taskulu"
 	"time"
@@ -26,24 +26,25 @@ func NewBaleIntegration(log *pkg.Logger, taskulu *taskulu.Client, baleHook *Bale
 }
 
 func (b *BaleIntegration) Run() {
-	go b.run("5a8d1fff56ad660b0dd0d343")
+	go b.run("5a8d1fff56ad660b0dd0d343", "")
 }
 
-func (b *BaleIntegration) run(projectId string) {
+func (b *BaleIntegration) run(projectId string, sheetName string) {
 	for {
-		b.SendLastActivity(projectId)
+		b.SendLastActivity(projectId, sheetName)
 		time.Sleep(time.Second)
 	}
 }
 
-func (b *BaleIntegration) SendLastActivity(projectId string) string {
+func (b *BaleIntegration) SendLastActivity(projectId string, sheetName string) string {
 	err, body := b.taskulu.GetActivities(projectId, 3)
 	if err != nil {
 		b.log.Error(err)
 	}
-	t := time.Unix(int64(body.Data[0].CreatedAt), 0)
-	if t.After(b.date) {
-		result, err := b.baleHook.Send(b.getActivityMessage(body.Data[0].Content.Message, body.Data[0].Content.Keys))
+	last := body.Data[0]
+	t := time.Unix(int64(last.CreatedAt), 0)
+	if t.After(b.date) && b.filterActivity(&last, projectId, sheetName) {
+		result, err := b.baleHook.Send(b.getActivityMessage(last.Content.Message, last.Content.Keys))
 		if err != nil {
 			b.log.Error("BaleHook error::", err)
 		}
@@ -51,6 +52,11 @@ func (b *BaleIntegration) SendLastActivity(projectId string) string {
 		return result
 	}
 	return ""
+}
+
+func (b *BaleIntegration) filterActivity(body *model.ActivitiesData, projectId string, sheetName string) bool {
+
+	return true
 }
 
 func (b *BaleIntegration) getActivityMessage(message string, keys []model.Keys) string {
