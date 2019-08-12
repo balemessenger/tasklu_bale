@@ -15,9 +15,9 @@ import (
 )
 
 var (
-	Conf     *internal.Config
-	task     *taskulu.Client
-	activity *internal.ActivityService
+	Conf        *internal.Config
+	task        *taskulu.Client
+	integration *internal.BaleIntegration
 )
 
 func setup() {
@@ -47,7 +47,8 @@ func setup() {
 
 	bale := internal.NewBale("http://127.0.0.1:12346", "")
 
-	activity = internal.NewActivity(log, task, bale, time.Unix(1565091220, 0))
+	activity := internal.NewActivity(log, task, time.Unix(1565091220, 0))
+	integration = internal.NewBaleIntegration(log, bale, activity)
 
 	time.Sleep(4000 * time.Millisecond)
 }

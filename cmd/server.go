@@ -35,7 +35,8 @@ func initialize() *pkg.Logger {
 		Password: "0",
 	})
 
-	integration := internal.NewBaleIntegration(log, task, bale, time.Now())
+	activity := internal.NewActivity(log, task, time.Now())
+	integration := internal.NewBaleIntegration(log, bale, activity)
 
 	integration.Run()
 }

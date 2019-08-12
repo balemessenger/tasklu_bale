@@ -8,12 +8,14 @@ import (
 type BaleIntegration struct {
 	log      *pkg.Logger
 	baleHook *BaleHook
-	activity ActivityService
+	activity *ActivityService
 }
 
-func NewBaleIntegration(log *pkg.Logger) *BaleIntegration {
+func NewBaleIntegration(log *pkg.Logger, baleHook *BaleHook, activity *ActivityService) *BaleIntegration {
 	return &BaleIntegration{
-		log: log,
+		log:      log,
+		baleHook: baleHook,
+		activity: activity,
 	}
 }
 
@@ -23,7 +25,16 @@ func (b *BaleIntegration) Run() {
 
 func (b *BaleIntegration) run(projectId string, sheetName string) {
 	for {
-		b.activity.SendLastActivity(projectId, sheetName)
+
 		time.Sleep(time.Second)
 	}
+}
+
+func (b *BaleIntegration) SendLastActivity(projectId string, sheetName string) string {
+	msg := b.activity.GetLastActivity(projectId, sheetName)
+	result, err := b.baleHook.Send(msg)
+	if err != nil {
+		b.log.Error("BaleHook error::", err)
+	}
+	return result
 }

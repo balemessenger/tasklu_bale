@@ -18,22 +18,20 @@ const (
 type ActivityService struct {
 	log        *pkg.Logger
 	taskulu    *taskulu.Client
-	baleHook   *BaleHook
 	date       time.Time
 	conditions []string
 }
 
-func NewActivity(log *pkg.Logger, taskulu *taskulu.Client, baleHook *BaleHook, date time.Time) *ActivityService {
+func NewActivity(log *pkg.Logger, taskulu *taskulu.Client, date time.Time) *ActivityService {
 	return &ActivityService{
 		log:        log,
 		taskulu:    taskulu,
-		baleHook:   baleHook,
 		date:       date,
 		conditions: []string{Status, Receipt, Create},
 	}
 }
 
-func (b *ActivityService) SendLastActivity(projectId string, sheetName string) string {
+func (b *ActivityService) GetLastActivity(projectId string, sheetName string) string {
 	err, body := b.taskulu.GetActivities(projectId, 3)
 	if err != nil {
 		b.log.Error(err)
@@ -41,12 +39,8 @@ func (b *ActivityService) SendLastActivity(projectId string, sheetName string) s
 	last := body.Data[0]
 	t := time.Unix(int64(last.CreatedAt), 0)
 	if t.After(b.date) && b.filterActivity(&last, projectId, sheetName) {
-		result, err := b.baleHook.Send(b.getActivityMessage(last.Content.Message, last.Content.Keys))
-		if err != nil {
-			b.log.Error("BaleHook error::", err)
-		}
 		b.date = t
-		return result
+		return b.getActivityMessage(last.Content.Message, last.Content.Keys)
 	}
 	return ""
 }
