@@ -52,7 +52,8 @@ const (
             "created_at": 1565357288
         }
 	]
-}`
+}
+`
 
 	Session =`
 {

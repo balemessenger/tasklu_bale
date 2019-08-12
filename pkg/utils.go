@@ -32,8 +32,17 @@ func (Utils) ConvertToHex(token []byte) string {
 	return re.ReplaceAllString(str, "")
 }
 
-// Is element of s contains in e
 func (Utils) ContainsString(s []string, e string) bool {
+	for _, a := range s {
+		if a == e {
+			return true
+		}
+	}
+	return false
+}
+
+// Is element of s contains in e
+func (Utils) ReverseContainsString(s []string, e string) bool {
 	for _, a := range s {
 		if strings.Contains(e, a) {
 			return true

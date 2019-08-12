@@ -5,17 +5,21 @@ type Activities struct {
 	Status string           `json:"status"`
 	Data   []ActivitiesData `json:"data"`
 }
-type ActivitiesData struct {
-	By        string  `json:"by"`
-	Content   Content `json:"content"`
-	CreatedAt int     `json:"created_at"`
+type Ids struct {
+	ProjectID string `json:"project_id"`
+	TaskID    string `json:"task_id"`
+}
+type Keys struct {
+	Type  string `json:"type"`
+	Ids   Ids    `json:"ids,omitempty"`
+	Value string `json:"value"`
 }
 type Content struct {
 	Keys    []Keys `json:"keys"`
 	Message string `json:"message"`
 }
-type Keys struct {
-	Type  string            `json:"type"`
-	Ids   map[string]string `json:"ids,omitempty"`
-	Value string            `json:"value"`
+type ActivitiesData struct {
+	By        string  `json:"by"`
+	Content   Content `json:"content"`
+	CreatedAt int     `json:"created_at"`
 }

@@ -3,13 +3,11 @@ package test
 import (
 	"bytes"
 	"encoding/json"
-	"log"
-	myhttp "taskulu/api/http"
-
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"net/http"
+	myhttp "taskulu/api/http"
 	"testing"
 )
 

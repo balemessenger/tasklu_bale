@@ -15,6 +15,7 @@ import (
 )
 
 var (
+	log         *pkg.Logger
 	Conf        *internal.Config
 	task        *taskulu.Client
 	integration *internal.BaleIntegration
@@ -23,7 +24,7 @@ var (
 func setup() {
 	rand.Seed(time.Now().Unix())
 	Conf = testkit.InitTestConfig("config.yaml")
-	log := pkg.NewLog("DEBUG")
+	log = pkg.NewLog("DEBUG")
 
 	http.New(
 		log,
@@ -47,7 +48,8 @@ func setup() {
 
 	bale := internal.NewBale("http://127.0.0.1:12346", "")
 
-	activity := internal.NewActivity(log, task, time.Unix(1565091220, 0))
+	sheet := internal.NewSheet(log, task)
+	activity := internal.NewActivity(log, task, sheet, time.Unix(1565091220, 0))
 	integration = internal.NewBaleIntegration(log, bale, activity)
 
 	time.Sleep(4000 * time.Millisecond)

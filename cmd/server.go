@@ -2,13 +2,10 @@ package cmd
 
 import (
 	"fmt"
-	"time"
-
 	"taskulu/api/http"
 	"taskulu/internal"
 	"taskulu/internal/server"
 	"taskulu/pkg"
-	"taskulu/pkg/taskulu"
 )
 
 func initialize() *pkg.Logger {
@@ -27,18 +24,9 @@ func initialize() *pkg.Logger {
 
 	pkg.NewPrometheus(log, conf.Prometheus.Port)
 
-	bale := internal.NewBale("https://api.bale.ai", "672ba3ce56037687f59fc746bf32f60581d8c551d5ead7aa098697021443700e")
+	internal.RunIntegration(log, "672ba3ce56037687f59fc746bf32f60581d8c551d5ead7aa098697021443700e", "5a8d1fff56ad660b0dd0d343", "فروغ")
 
-	task := taskulu.New(log, taskulu.Option{
-		BaseUrl:  "https://taskulu.com",
-		Username: "amsjavan",
-		Password: "0",
-	})
-
-	activity := internal.NewActivity(log, task, time.Now())
-	integration := internal.NewBaleIntegration(log, bale, activity)
-
-	integration.Run()
+	return log
 }
 
 func Main() {

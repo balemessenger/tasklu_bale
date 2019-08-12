@@ -6,26 +6,30 @@ import (
 )
 
 type BaleIntegration struct {
-	log      *pkg.Logger
-	baleHook *BaleHook
-	activity *ActivityService
+	log        *pkg.Logger
+	baleHook   *BaleHook
+	activity   *ActivityService
+	projectId  string
+	sheetTitle string
 }
 
-func NewBaleIntegration(log *pkg.Logger, baleHook *BaleHook, activity *ActivityService) *BaleIntegration {
+func NewBaleIntegration(log *pkg.Logger, baleHook *BaleHook, activity *ActivityService, projectId string, sheetTitle string) *BaleIntegration {
 	return &BaleIntegration{
-		log:      log,
-		baleHook: baleHook,
-		activity: activity,
+		log:        log,
+		baleHook:   baleHook,
+		activity:   activity,
+		projectId:  projectId,
+		sheetTitle: sheetTitle,
 	}
 }
 
 func (b *BaleIntegration) Run() {
-	go b.run("5a8d1fff56ad660b0dd0d343", "")
+	go b.run(b.projectId, b.sheetTitle)
 }
 
 func (b *BaleIntegration) run(projectId string, sheetName string) {
 	for {
-
+		b.SendLastActivity(projectId, sheetName)
 		time.Sleep(time.Second)
 	}
 }

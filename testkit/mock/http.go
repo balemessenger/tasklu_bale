@@ -51,11 +51,20 @@ func NewHandler(log *pkg.Logger) *Handler {
 }
 
 func (h *Handler) StatusActivitiesHandler(c *gin.Context) {
-	if c.Query("app_key") == "" &&  c.Query("session_key") == "" {
+	if c.Query("app_key") == "" &&  c.Query("session_id") == "" {
 		c.AbortWithStatus(http.StatusUnauthorized)
 		return
 	}
 	c.String(http.StatusOK, ChangeStatusActivities)
+	return
+}
+
+func (h *Handler) ProjectHandler(c *gin.Context) {
+	if c.Query("app_key") == "" &&  c.Query("session_id") == "" {
+		c.AbortWithStatus(http.StatusUnauthorized)
+		return
+	}
+	c.String(http.StatusOK, Project)
 	return
 }
 
@@ -77,5 +86,6 @@ func (h *Handler) BaleIntegration(c *gin.Context) {
 func (s *Server) setupRouter() {
 	s.engine.POST(taskulu.GetTaskuluApi().CreateSession(), s.handler.CreateSession)
 	s.engine.GET(taskulu.GetTaskuluApi().GetActivities("123456"), s.handler.StatusActivitiesHandler)
+	s.engine.GET(taskulu.GetTaskuluApi().GetProject("123456"), s.handler.ProjectHandler)
 	s.engine.POST("/v1/webhooks/", s.handler.BaleIntegration)
 }
