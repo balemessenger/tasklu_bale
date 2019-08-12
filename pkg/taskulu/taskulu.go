@@ -7,8 +7,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
-	"taskulu/pkg/taskulu/model"
 	"taskulu/pkg"
+	"taskulu/pkg/taskulu/model"
 )
 
 type Client struct {
