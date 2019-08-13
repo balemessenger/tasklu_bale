@@ -3,12 +3,13 @@ package taskulu
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/pkg/errors"
 	"io/ioutil"
 	"net/http"
 	"strings"
 	"taskulu/pkg"
 	"taskulu/pkg/taskulu/model"
+
+	"github.com/pkg/errors"
 )
 
 type Client struct {
@@ -141,10 +142,4 @@ func (t *Client) retrySession() {
 	t.appKey = s.Data.AppKey
 	t.sessionId = s.Data.SessionId
 	t.retryCount++
-}
-
-func (t *Client) logError(err error) {
-	if err != nil {
-		t.log.Error(err)
-	}
 }

@@ -3,7 +3,7 @@
 VERSION=`${PWD}/scripts/version.sh`
 
 curl -X POST \
-  https://1001.bale.ai/api/v2/job_templates/46/launch/ \
+  https://1001.bale.ai/api/v2/job_templates/343/launch/ \
   -H 'Authorization: Basic amVua2luczpqc0BscyZzcyMx' \
   -H 'Content-Type: application/json' \
   -H 'Postman-Token: 6d5c2995-d8c2-4c9e-886b-f8a11487aaa2' \
@@ -13,6 +13,6 @@ curl -X POST \
  "_config_repo_url": "ssh://git@prd-gitlab.c002.obale.ir:2222/bale/prd/taskulu.git",
  "_service": "taskulu",
  "_hosts": "nav1152",
- "_version": "docker.bale.ai/goft/taskulu:'$VERSION'"
+ "_version": "docker.bale.ai/molana/taskulu:'$VERSION'"
 	}
 }'

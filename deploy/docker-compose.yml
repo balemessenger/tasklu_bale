@@ -1,0 +1,6 @@
+version: '2'
+services:
+  taskulu:
+    image: docker.bale.ai/molana/taskulu:0.0-1
+    hostname: taskulu
+    container_name: taskulu

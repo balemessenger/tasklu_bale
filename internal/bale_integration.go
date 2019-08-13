@@ -36,6 +36,9 @@ func (b *BaleIntegration) run(projectId string, sheetName string) {
 
 func (b *BaleIntegration) SendLastActivity(projectId string, sheetName string) string {
 	msg := b.activity.GetLastActivity(projectId, sheetName)
+	if msg == "" {
+		return ""
+	}
 	result, err := b.baleHook.Send(msg)
 	if err != nil {
 		b.log.Error("BaleHook error::", err)

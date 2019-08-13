@@ -10,9 +10,9 @@ type Ids struct {
 	TaskID    string `json:"task_id"`
 }
 type Keys struct {
-	Type  string `json:"type"`
-	Ids   Ids    `json:"ids,omitempty"`
-	Value string `json:"value"`
+	Type  string      `json:"type"`
+	Ids   Ids         `json:"ids,omitempty"`
+	Value interface{} `json:"value"`
 }
 type Content struct {
 	Keys    []Keys `json:"keys"`

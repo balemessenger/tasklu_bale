@@ -36,7 +36,7 @@ func NewActivity(log *pkg.Logger, taskulu *taskulu.Client, sheetService *SheetSe
 func (b *ActivityService) GetLastActivity(projectId string, sheetName string) string {
 	body, err := b.taskulu.GetActivities(projectId, 3)
 	if err != nil {
-		b.log.Error(err)
+		b.log.Error("Activity::", err)
 		return ""
 	}
 	last := body.Data[0]
@@ -58,11 +58,11 @@ func (b *ActivityService) filterActivity(body *model.ActivitiesData, projectId s
 
 func (b *ActivityService) getActivityMessage(message string, keys []model.Keys) string {
 	if strings.Contains(message, Status) {
-		return fmt.Sprintf("تسک %s از وضعیت %s به وضعیت %s تغییر کرد.", keys[2].Value, keys[1].Value, keys[0].Value)
+		return fmt.Sprintf("تسک %s از وضعیت %s به وضعیت %s تغییر کرد.", keys[0].Value, keys[1].Value, keys[2].Value)
 	} else if strings.Contains(message, Receipt) {
-		return fmt.Sprintf("سررسید کار %s به %s تغییر پیدا کرد.", keys[1].Value, keys[0].Value)
+		return fmt.Sprintf("سررسید کار %s به %s تغییر پیدا کرد.", keys[0].Value, keys[1].Value)
 	} else if strings.Contains(message, Create) {
-		return fmt.Sprintf("کار %s درلیست %s ایجاد شد.", keys[1].Value, keys[0].Value)
+		return fmt.Sprintf("کار %s درلیست %s ایجاد شد.", keys[0].Value, keys[1].Value)
 	} else {
 		return ""
 	}

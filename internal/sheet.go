@@ -21,7 +21,7 @@ func NewSheet(log *pkg.Logger, taskulu *taskulu.Client) *SheetService {
 func (s *SheetService) FindSheetByTaskId(projectId string, taskId string) model.Sheets {
 	projects, err := s.taskulu.GetProjects(projectId, 3)
 	if err != nil {
-		s.log.Error(err)
+		s.log.Error("Sheet::", err)
 	}
 	for _, sheet := range projects.Data.Sheets {
 		for _, list := range sheet.TaskLists {
