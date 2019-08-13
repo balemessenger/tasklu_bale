@@ -3,10 +3,11 @@ package internal
 import (
 	"bytes"
 	"fmt"
-	log "github.com/sirupsen/logrus"
-	"github.com/spf13/viper"
 	"io/ioutil"
 	"strings"
+
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 )
 
 type Config struct {
@@ -29,21 +30,6 @@ core:
   mode: "release" # release, debug, test
   work_pool_size: 1000
 
-postgres:
-  host: ""
-  port: 5432
-  db: ""
-  user: ""
-  pass: ""
-  batch_count: 5
-
-
-kafka:
-  bootstrap_servers: ""
-  group_id: "random"
-  auto_offset_reset: "earliest"
-  topic: "taskulu"
-
 prometheus:
   port: 8080
 log:
@@ -61,10 +47,6 @@ endpoints:
 
 type ConfYaml struct {
 	Core SectionCore `yaml:"core"`
-
-	Postgres SectionPostgres `yaml:"postgres"`
-
-	Kafka SectionKafka `yaml:"kafka"`
 
 	Prometheus SectionPrometheus `yaml:"prometheus"`
 	Log        SectionLog        `yaml:"log"`
@@ -160,20 +142,6 @@ func loadConf(confPath string) (ConfYaml, error) {
 	// Core
 	conf.Core.Mode = viper.GetString("core.mode")
 	conf.Core.WorkPoolSize = viper.GetInt("core.work_pool_size")
-
-	// Postgres
-	conf.Postgres.Host = viper.GetString("postgres.host")
-	conf.Postgres.Port = viper.GetInt("postgres.port")
-	conf.Postgres.DB = viper.GetString("postgres.db")
-	conf.Postgres.User = viper.GetString("postgres.user")
-	conf.Postgres.Pass = viper.GetString("postgres.pass")
-	conf.Postgres.BatchCount = viper.GetInt("postgres.batch_count")
-
-	// Kafka
-	conf.Kafka.BootstrapServers = viper.GetString("kafka.bootstrap_servers")
-	conf.Kafka.GroupId = viper.GetString("kafka.group_id")
-	conf.Kafka.AutoOffsetReset = viper.GetString("kafka.auto_offset_reset")
-	conf.Kafka.Topic = viper.GetString("kafka.topic")
 
 	// Prometheus
 	conf.Prometheus.Port = viper.GetInt("prometheus.port")
