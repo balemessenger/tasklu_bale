@@ -42,30 +42,29 @@ func (b *ActivityService) GetLastActivity(projectId string, sheetName string) st
 	}
 	last := body.Data[0]
 	t := time.Unix(int64(last.CreatedAt), 0)
-	if t.After(b.date) && b.filterActivity(&last, projectId, sheetName) {
+	taskID := last.Content.Keys[0].Ids.TaskID
+	if t.After(b.date) && b.filterActivity(&last, projectId, taskID, sheetName) {
 		b.date = t
-		return b.getActivityMessage(last.Content.Message, last.Content.Keys)
+		return b.getActivityMessage(last.Content.Message, last.Content.Keys, projectId, taskID)
 	}
 	return ""
 }
 
-func (b *ActivityService) filterActivity(body *model.ActivitiesData, projectId string, sheetName string) bool {
+func (b *ActivityService) filterActivity(body *model.ActivitiesData, projectID, taskID, sheetName string) bool {
 	c1 := pkg.GetUtils().ReverseContainsString(b.conditions, body.Content.Message)
-	taskId := body.Content.Keys[0].Ids.TaskID
-	sheet := b.sheetService.FindSheetByTaskId(projectId, taskId)
+	sheet := b.sheetService.FindSheetByTaskId(projectID, taskID)
 	c2 := sheet.Title == sheetName
-	fmt.Println("===", body.Content.Message, c1, c2)
 	return c1 && c2
 }
 
-func (b *ActivityService) getActivityMessage(message string, keys []model.Keys) string {
+func (b *ActivityService) getActivityMessage(message string, keys []model.Keys, projectID, taskID string) string {
 	size := len(keys)
 	if strings.Contains(message, Status) {
-		return fmt.Sprintf("تسک %s از وضعیت %s به وضعیت %s تغییر کرد.", keys[0].Value, keys[size-2].Value, keys[size-1].Value)
+		return fmt.Sprintf("تسک [%s](https://taskulu.com/a/project/%v/tasks/%v) از وضعیت %s به وضعیت %s تغییر کرد.", keys[0].Value, projectID, taskID, keys[size-2].Value, keys[size-1].Value)
 	} else if strings.Contains(message, Receipt) {
-		return fmt.Sprintf("سررسید کار %s به %s تغییر پیدا کرد.", keys[0].Value, keys[1].Value)
+		return fmt.Sprintf("سررسید کار [%s](https://taskulu.com/a/project/%v/tasks/%v) به %s تغییر پیدا کرد.", keys[0].Value, projectID, taskID, keys[1].Value)
 	} else if strings.Contains(message, Create) {
-		return fmt.Sprintf("کار %s درلیست %s ایجاد شد.", keys[0].Value, keys[size-1].Value)
+		return fmt.Sprintf("کار [%s](https://taskulu.com/a/project/%v/tasks/%v) درلیست %s ایجاد شد.", keys[0].Value, projectID, taskID, keys[size-1].Value)
 	} else if strings.Contains(message, Remove) {
 		return fmt.Sprintf("کار %s حذف شد.", keys[size-1].Value)
 	} else {

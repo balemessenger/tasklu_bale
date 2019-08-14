@@ -24,6 +24,9 @@ func initialize() *pkg.Logger {
 
 	pkg.NewPrometheus(log, conf.Prometheus.Port)
 
+	//تندر بله - گوشک
+	internal.RunIntegration(log, "672ba3ce56037687f59fc746bf32f60581d8c551d5ead7aa098697021443700e", "5d088afd56ad6678a4df44dc", "گوشک")
+
 	//تندر بله - مولانا
 	internal.RunIntegration(log, "663740aa141d26f57eab0d1ef75078652378edbf5479f981af7f98c0ba6abbf3", "5d088afd56ad6678a4df44dc", "مولانا")
 
