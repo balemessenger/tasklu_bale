@@ -2,6 +2,7 @@ package test
 
 import (
 	"taskulu/internal"
+	postgres2 "taskulu/internal/postgres"
 	"taskulu/testkit/mock"
 
 	"math/rand"
@@ -16,6 +17,7 @@ import (
 
 var (
 	log         *pkg.Logger
+	postgres    *postgres2.Database
 	Conf        *internal.Config
 	task        *taskulu.Client
 	integration *internal.BaleIntegration
@@ -34,6 +36,14 @@ func setup() {
 			Pass:    Conf.Endpoints.Http.Pass,
 		})
 
+	postgres = postgres2.New(log, postgres2.Option{
+		Host: "127.0.0.1",
+		Port: "5432",
+		User: "taskulu",
+		Pass: "taskulu",
+		Db:   "taskulu",
+	})
+
 	mock.New(log, mock.Option{
 		Address: "127.0.0.1:12346",
 		User:    "test",
@@ -48,9 +58,11 @@ func setup() {
 
 	bale := internal.NewBale("http://127.0.0.1:12346", "")
 
+	projectId := "12346"
+	sheetName := "SampleSheet"
 	sheet := internal.NewSheet(log, task)
 	activity := internal.NewActivity(log, task, sheet, time.Unix(1565091220, 0))
-	integration = internal.NewBaleIntegration(log, bale, activity)
+	integration = internal.NewBaleIntegration(log, bale, activity, projectId, sheetName)
 
 	time.Sleep(4000 * time.Millisecond)
 }
