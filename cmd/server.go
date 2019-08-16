@@ -1,13 +1,16 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
+	context2 "golang.org/x/net/context"
 	"taskulu/api/http"
 	"taskulu/internal"
 	"taskulu/internal/bot"
 	"taskulu/internal/postgres"
 	"taskulu/internal/server"
 	"taskulu/pkg"
+	"time"
 )
 
 func initialize() *pkg.Logger {
@@ -29,13 +32,37 @@ func initialize() *pkg.Logger {
 	pg := postgres.New(log, postgres.Option{
 		Host: "127.0.0.1",
 		Port: "5432",
-		User: "taskulu",
-		Pass: "taskulu",
+		User: "nasim",
+		Pass: "nasim",
 		Db:   "taskulu",
 	})
 
 	b := bot.New(log, pg, "512522922:3a615125d2d088f1768c9fb29acb9d7ff5127ad8")
 	b.Run()
+
+	//Run all users
+	readUsers := make(map[int]context2.CancelFunc)
+
+	date := time.Unix(0, 0)
+
+	for {
+		credentials, err := pg.GetAllUserAuth(date)
+		if err != nil {
+			log.Error(err)
+		}
+		for _, cred := range credentials {
+			if cancel, ok := readUsers[cred.UserId]; ok {
+				cancel()
+			}
+			ctx, cancel := context.WithCancel(context.Background())
+			internal.RunNotification(ctx, log, b, cred.UserId, cred.Username, cred.Password)
+			if cred.UpdatedAt.After(date) {
+				date = cred.UpdatedAt
+			}
+			readUsers[cred.UserId] = cancel
+		}
+		time.Sleep(5 * time.Second)
+	}
 
 	////تندر بله - گوشک
 	//internal.RunIntegration(log, "672ba3ce56037687f59fc746bf32f60581d8c551d5ead7aa098697021443700e", "5d088afd56ad6678a4df44dc", "گوشک")

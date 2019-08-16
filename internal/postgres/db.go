@@ -5,6 +5,7 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"taskulu/pkg"
+	"time"
 )
 
 type Database struct {
@@ -28,7 +29,7 @@ type Taskulu struct {
 }
 
 func New(log *pkg.Logger, option Option) *Database {
-	url := fmt.Sprintf("host=%v port=%v user=%v dbname=%v password=%v sslmode=disable", option.Host, option.Port, option.Db, option.Pass)
+	url := fmt.Sprintf("host=%v port=%v user=%v dbname=%v password=%v sslmode=disable", option.Host, option.Port, option.User, option.Db, option.Pass)
 	db, err := gorm.Open("postgres", url)
 	if err != nil {
 		log.Fatal("failed to connect database", err)
@@ -98,8 +99,8 @@ func (d *Database) GetTaskuluByUser(userId int) ([]Taskulu, error) {
 	return taskulu, r.Error
 }
 
-func (d *Database) GetAllUserAuth() ([]Taskulu, error) {
+func (d *Database) GetAllUserAuth(date time.Time) ([]Taskulu, error) {
 	var taskulu []Taskulu
-	r := d.db.Find(&taskulu)
+	r := d.db.Where("updated_at > ?", date).Find(&taskulu)
 	return taskulu, r.Error
 }

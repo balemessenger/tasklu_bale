@@ -43,6 +43,10 @@ func New(log *pkg.Logger, db *postgres.Database, token string) *TaskuluBot {
 }
 
 func (t *TaskuluBot) Run() {
+	go t.run()
+}
+
+func (t *TaskuluBot) run() {
 
 	for update := range t.updates {
 		if update.Message == nil { // ignore any non-Message Updates
@@ -107,6 +111,12 @@ const (
 	HELP   = "راهنما"
 	RETURN = "بازگشت"
 )
+
+func (t *TaskuluBot) SendTextMessage(id int, text string) error {
+	msg := tgbotapi.NewMessage(int64(id), text)
+	_, err := t.botApi.Send(msg)
+	return err
+}
 
 func (t *TaskuluBot) sendMessage(id int, text string) {
 	msg := tgbotapi.NewMessage(int64(id), text)

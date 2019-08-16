@@ -27,6 +27,14 @@ func (*TaskuluApi) GetNotifications() string {
 	return "/api/v1/notifications"
 }
 
+func (*TaskuluApi) MarkNotificationSeen(id string) string {
+	return fmt.Sprintf("/api/v1/notifications/%v/task", id)
+}
+
+func (*TaskuluApi) MarkAllNotificationSeen() string {
+	return "/api/v1/notifications"
+}
+
 func (*TaskuluApi) GetProject(projectId string) string {
 	return "/api/v1/projects/" + projectId
 }
