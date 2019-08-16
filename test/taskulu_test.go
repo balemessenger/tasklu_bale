@@ -46,3 +46,17 @@ func TestGetProjects(t *testing.T) {
 	assert.Contains(t, b.Data.Sheets[0].TaskLists[0].TaskOrder, "5d46b04456ad667202008c23")
 
 }
+
+func TestGetNotification(t *testing.T) {
+	b, err := task.GetNotifications(3)
+
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	assert.Equal(t, b.Data.TotalUnseen, 4)
+	assert.Equal(t, b.Data.Notifications[0].ID, "5b029ee056ad663c260013ee")
+	assert.Contains(t, b.Data.Notifications[0].Content.Keys[0].Ids.ProjectID, "5b029ee056ad663c260013c9")
+
+}

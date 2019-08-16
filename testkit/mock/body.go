@@ -211,5 +211,90 @@ Project = `
   }
 }
 `
+Notification = `
+{
+  "ok": true,
+  "status": "OK",
+  "data": {
+    "total_unseen": 4,
+    "notifications": [
+      {
+        "id": "5b029ee056ad663c260013ee",
+        "by": "5b029ee056ad663c260013c8",
+        "content": {
+          "keys": [
+            {
+              "type": "text",
+              "ids": {
+                "project_id": "5b029ee056ad663c260013c9",
+                "task_id": "5b029ee056ad663c260013ed"
+              },
+              "value": "Foo"
+            },
+            {
+              "type": "text",
+              "ids": {
+                "project_id": "5b029ee056ad663c260013c9"
+              },
+              "value": "corrupti modi occaecati"
+            },
+            {
+              "type": "text",
+              "value": "Verla"
+            }
+          ],
+          "message": "%[2] assigned %[0] on project %[1] to you."
+        },
+        "created_at": 1526207200,
+        "seen": false,
+        "on_type": "task",
+        "type": "user_assigned_to_task",
+        "by_meta_data": {
+          "name": "Verla",
+          "username": "person255"
+        },
+        "project_id": "5b029ee056ad663c260013c9"
+      },
+      {
+        "id": "5b029ee056ad663c260013e8",
+        "by": "5b029ee056ad663c260013c8",
+        "content": {
+          "keys": [
+            {
+              "type": "text",
+              "ids": {
+                "project_id": "5b029ee056ad663c260013c9",
+                "task_id": "5b029ee056ad663c260013e7"
+              },
+              "value": "Foo"
+            },
+            {
+              "type": "text",
+              "ids": {
+                "project_id": "5b029ee056ad663c260013c9"
+              },
+              "value": "corrupti modi occaecati"
+            },
+            {
+              "type": "text",
+              "value": "Verla"
+            }
+          ],
+          "message": "%[2] assigned %[0] on project %[1] to you."
+        },
+        "created_at": 1526207200,
+        "seen": false,
+        "on_type": "task",
+        "type": "user_assigned_to_task",
+        "by_meta_data": {
+          "name": "Verla",
+          "username": "person255"
+        },
+        "project_id": "5b029ee056ad663c260013c9"
+      }
+    ]
+  }
+}
+`
 
 )

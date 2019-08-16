@@ -23,6 +23,10 @@ func (*TaskuluApi) CreateSession() string {
 	return "/api/v1/sessions/password"
 }
 
+func (*TaskuluApi) GetNotifications() string {
+	return "/api/v1/notifications"
+}
+
 func (*TaskuluApi) GetProject(projectId string) string {
 	return "/api/v1/projects/" + projectId
 }

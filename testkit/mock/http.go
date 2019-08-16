@@ -68,6 +68,15 @@ func (h *Handler) ProjectHandler(c *gin.Context) {
 	return
 }
 
+func (h *Handler) NotificationHandler(c *gin.Context) {
+	if c.Query("app_key") == "" &&  c.Query("session_id") == "" {
+		c.AbortWithStatus(http.StatusUnauthorized)
+		return
+	}
+	c.String(http.StatusOK, Notification)
+	return
+}
+
 func (h *Handler) CreateSession(c *gin.Context) {
 	c.String(http.StatusCreated, Session)
 	return
@@ -87,5 +96,6 @@ func (s *Server) setupRouter() {
 	s.engine.POST(taskulu.GetTaskuluApi().CreateSession(), s.handler.CreateSession)
 	s.engine.GET(taskulu.GetTaskuluApi().GetActivities("123456"), s.handler.StatusActivitiesHandler)
 	s.engine.GET(taskulu.GetTaskuluApi().GetProject("123456"), s.handler.ProjectHandler)
+	s.engine.GET(taskulu.GetTaskuluApi().GetNotifications(), s.handler.NotificationHandler)
 	s.engine.POST("/v1/webhooks/", s.handler.BaleIntegration)
 }

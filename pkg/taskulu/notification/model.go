@@ -1,18 +1,18 @@
 package notification
 
 type Notifications struct {
-	Ok     bool             `json:"ok"`
-	Status string           `json:"status"`
-	Data   NotificationData `json:"data"`
+	Ok     bool   `json:"ok"`
+	Status string `json:"status"`
+	Data   Data   `json:"data"`
 }
-type NotificationIds struct {
+type Ids struct {
 	ProjectID string `json:"project_id"`
 	TaskID    string `json:"task_id,omitempty"`
 }
 type Keys struct {
-	Type  string          `json:"type"`
-	Ids   NotificationIds `json:"ids,omitempty"`
-	Value string          `json:"value"`
+	Type  string `json:"type"`
+	Ids   Ids    `json:"ids,omitempty"`
+	Value string `json:"value"`
 }
 type Content struct {
 	Keys    []Keys `json:"keys"`
@@ -33,7 +33,7 @@ type NotificationsBody struct {
 	ByMetaData ByMetaData `json:"by_meta_data"`
 	ProjectID  string     `json:"project_id"`
 }
-type NotificationData struct {
+type Data struct {
 	TotalUnseen   int                 `json:"total_unseen"`
 	Notifications []NotificationsBody `json:"notifications"`
 }

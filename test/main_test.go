@@ -48,9 +48,11 @@ func setup() {
 
 	bale := internal.NewBale("http://127.0.0.1:12346", "")
 
+	projectId := "12346"
+	sheetName := "SampleSheet"
 	sheet := internal.NewSheet(log, task)
 	activity := internal.NewActivity(log, task, sheet, time.Unix(1565091220, 0))
-	integration = internal.NewBaleIntegration(log, bale, activity)
+	integration = internal.NewBaleIntegration(log, bale, activity, projectId, sheetName)
 
 	time.Sleep(4000 * time.Millisecond)
 }

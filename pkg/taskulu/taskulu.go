@@ -10,6 +10,7 @@ import (
 	"taskulu/pkg/taskulu/model"
 
 	"github.com/pkg/errors"
+	"taskulu/pkg/taskulu/notification"
 )
 
 type Client struct {
@@ -55,6 +56,37 @@ func (t *Client) CreateSession(username, password string) (*model.Session, error
 		return nil, err
 	}
 	b := &model.Session{}
+	err = json.Unmarshal(body, b)
+	if err != nil {
+		return nil, err
+	}
+	return b, nil
+}
+
+func (t *Client) GetNotifications(retryCount int) (*notification.Notifications, error) {
+	resp, err := http.Get(t.getNotificationUrl())
+	if err != nil {
+		return nil, err
+	}
+
+	// retry
+	if resp.StatusCode == 401 {
+		if retryCount == 0 {
+			return nil, errors.New(resp.Status)
+		}
+		t.retrySession()
+		return t.GetNotifications(retryCount - 1)
+	}
+
+	if resp.StatusCode != 200 {
+		return nil, errors.New(resp.Status)
+	}
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	b := &notification.Notifications{}
 	err = json.Unmarshal(body, b)
 	if err != nil {
 		return nil, err
@@ -131,6 +163,10 @@ func (t *Client) getActivitiesUrl(projectId string) string {
 
 func (t *Client) getProjectsUrl(projectId string) string {
 	return t.baseUrl + GetTaskuluApi().GetProject(projectId) + GetTaskuluApi().GetAuthUrl(t.appKey, t.sessionId)
+}
+
+func (t *Client) getNotificationUrl() string {
+	return t.baseUrl + GetTaskuluApi().GetNotifications() + GetTaskuluApi().GetAuthUrl(t.appKey, t.sessionId)
 }
 
 func (t *Client) retrySession() {
