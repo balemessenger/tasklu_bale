@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func RunIntegration(log *pkg.Logger, groupToken, projectId, sheetTitle string) {
+func RunIntegration(log *pkg.Logger, groupToken, projectId, sheetTitle string, isFilter bool) {
 	bale := NewBale("https://api.bale.ai", groupToken)
 	task := taskulu.New(log, taskulu.Option{
 		BaseUrl:  "https://taskulu.com",
@@ -16,7 +16,7 @@ func RunIntegration(log *pkg.Logger, groupToken, projectId, sheetTitle string) {
 		Password: "bale2513060",
 	})
 	sheet := NewSheet(log, task)
-	activity := NewActivity(log, task, sheet, time.Now())
+	activity := NewActivity(log, task, sheet, time.Now(), isFilter)
 	integration := NewBaleIntegration(log, bale, activity, projectId, sheetTitle)
 	integration.Run()
 }

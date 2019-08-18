@@ -17,6 +17,7 @@ type Keys struct {
 type Content struct {
 	Keys    []Keys `json:"keys"`
 	Message string `json:"message"`
+	Digest  string `json:"digest,omitempty"`
 }
 type ActivitiesData struct {
 	By        string  `json:"by"`

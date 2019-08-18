@@ -22,15 +22,17 @@ type ActivityService struct {
 	sheetService *SheetService
 	date         time.Time
 	conditions   []string
+	isFilter     bool
 }
 
-func NewActivity(log *pkg.Logger, taskulu *taskulu.Client, sheetService *SheetService, date time.Time) *ActivityService {
+func NewActivity(log *pkg.Logger, taskulu *taskulu.Client, sheetService *SheetService, date time.Time, isFilter bool) *ActivityService {
 	return &ActivityService{
 		log:          log,
 		taskulu:      taskulu,
 		sheetService: sheetService,
 		date:         date,
 		conditions:   []string{Status, Receipt, Create, Remove},
+		isFilter:     isFilter,
 	}
 }
 
@@ -45,7 +47,15 @@ func (b *ActivityService) GetLastActivity(projectId string, sheetName string) st
 	taskID := last.Content.Keys[0].Ids.TaskID
 	if t.After(b.date) && b.filterActivity(&last, projectId, taskID, sheetName) {
 		b.date = t
-		return b.getActivityMessage(last.Content.Message, last.Content.Keys, projectId, taskID)
+		if b.isFilter {
+			return b.getActivityMessage(last.Content.Message, last.Content.Keys, projectId, taskID)
+		}
+		msg := b.getNonFilterActivity(last.Content.Message, last.Content.Keys, projectId, taskID)
+		if last.Content.Digest != "" {
+			msg = msg + "\\n_" + last.Content.Digest + "_"
+		}
+		return msg
+
 	}
 	return ""
 }
@@ -54,7 +64,7 @@ func (b *ActivityService) filterActivity(body *model.ActivitiesData, projectID, 
 	c1 := pkg.GetUtils().ReverseContainsString(b.conditions, body.Content.Message)
 	sheet := b.sheetService.FindSheetByTaskId(projectID, taskID)
 	c2 := sheet.Title == sheetName
-	return c1 && c2
+	return !b.isFilter || (c1 && c2)
 }
 
 func (b *ActivityService) getActivityMessage(message string, keys []model.Keys, projectID, taskID string) string {
@@ -70,4 +80,29 @@ func (b *ActivityService) getActivityMessage(message string, keys []model.Keys, 
 	} else {
 		return ""
 	}
+}
+
+func (b *ActivityService) getNonFilterActivity(message string, keys []model.Keys, projectID, taskID string) string {
+	size := len(keys)
+	msg := ""
+	formattedMsg := fmt.Sprintf(
+		"[%s](https://taskulu.com/a/project/%v/tasks/%v)",
+		keys[0].Value,
+		keys[0].Ids.ProjectID,
+		keys[0].Ids.TaskID)
+	if size == 2 {
+		msg = strings.ReplaceAll(message, "%[0]", formattedMsg)
+		msg = strings.ReplaceAll(msg, "%[1]", keys[1].Value.(string))
+	} else if size == 3 {
+		msg := strings.ReplaceAll(message, "%[0]", formattedMsg)
+		msg = strings.ReplaceAll(msg, "%[1]", keys[1].Value.(string))
+		msg = strings.ReplaceAll(msg, "%[2]", keys[2].Value.(string))
+	} else if size == 4 {
+		msg = strings.ReplaceAll(message, "%[0]", formattedMsg)
+		msg = strings.ReplaceAll(msg, "%[1]", keys[1].Value.(string))
+		msg = strings.ReplaceAll(msg, "%[2]", keys[2].Value.(string))
+		msg = strings.ReplaceAll(msg, "%[3]", keys[3].Value.(string))
+	}
+
+	return msg
 }
