@@ -75,8 +75,6 @@ func (b *ActivityService) getActivityMessage(message string, keys []model.Keys, 
 		return fmt.Sprintf("سررسید کار [%s](https://taskulu.com/a/project/%v/tasks/%v) به %s تغییر پیدا کرد.", keys[0].Value, projectID, taskID, keys[1].Value)
 	} else if strings.Contains(message, Create) {
 		return fmt.Sprintf("کار [%s](https://taskulu.com/a/project/%v/tasks/%v) درلیست %s ایجاد شد.", keys[0].Value, projectID, taskID, keys[size-1].Value)
-	} else if strings.Contains(message, Remove) {
-		return fmt.Sprintf("کار %s حذف شد.", keys[size-1].Value)
 	} else {
 		return ""
 	}
