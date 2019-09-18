@@ -59,6 +59,15 @@ func initialize() *pkg.Logger {
 	// 	time.Sleep(5 * time.Second)
 	// }
 
+	//تیم فردوسی - بانک آفیسر
+	internal.RunIntegration(log, "aa88d0c95d2eb051675a48515a1ae20a3975955d91da9d238a86cf5b62f5d5da", "5d6d084856ad6638ff14fb52", "بانک آفیسر", false)
+
+	////تیم فردوسی - اطلاع رسانی
+	//internal.RunIntegration(log, "3a32e6a89cbaf5dd9ab33c807140059d875747bd4feafaf6b713d28cba15889a", "5d6d084856ad6638ff14fb52", "اطلاع رسانی", false)
+	//
+	////تیم فردوسی - سایر
+	//internal.RunIntegration(log, "3a32e6a89cbaf5dd9ab33c807140059d875747bd4feafaf6b713d28cba15889a", "5d6d084856ad6638ff14fb52", "سایر", false)
+
 	//تندر بله - گوشک
 	internal.RunIntegration(log, "672ba3ce56037687f59fc746bf32f60581d8c551d5ead7aa098697021443700e", "5d088afd56ad6678a4df44dc", "گوشک", true)
 
@@ -66,7 +75,7 @@ func initialize() *pkg.Logger {
 	internal.RunIntegration(log, "cf0003c2032291330dcebe7ee215287596f0217ad1b869185441a53d45c6a4b7", "5d088afd56ad6678a4df44dc", "", false)
 
 	//تندر بله - مولانا
-	internal.RunIntegration(log, "663740aa141d26f57eab0d1ef75078652378edbf5479f981af7f98c0ba6abbf3", "5d088afd56ad6678a4df44dc", "مولانا", true)
+	//internal.RunIntegration(log, "663740aa141d26f57eab0d1ef75078652378edbf5479f981af7f98c0ba6abbf3", "5d088afd56ad6678a4df44dc", "مولانا", true)
 
 	//Bale Ticket - مولانا و فروغ
 	internal.RunIntegration(log, "6bfe43fe49ae3ee54ab44fbe716036bd6ca174ccdc0bce1875108a6b3d81fd69", "5a8d1fff56ad660b0dd0d343", "فروغ", true)

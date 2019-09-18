@@ -44,6 +44,10 @@ func (b *ActivityService) GetLastActivity(projectId string, sheetName string) st
 	}
 	last := body.Data[0]
 	t := time.Unix(int64(last.CreatedAt), 0)
+	if len(last.Content.Keys) == 0 {
+		b.log.Warnf("Empty content key for projectId: %v, sheetName: %v", projectId, sheetName)
+		return ""
+	}
 	taskID := last.Content.Keys[0].Ids.TaskID
 	if t.After(b.date) && b.filterActivity(&last, projectId, taskID, sheetName) {
 		b.date = t
